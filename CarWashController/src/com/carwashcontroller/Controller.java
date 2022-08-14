@@ -4,6 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Dictionary;
+import java.util.Hashtable;
 
 public class Controller extends JFrame {
     private JPanel wrapper;
@@ -27,6 +29,20 @@ public class Controller extends JFrame {
     private JLabel lbl_washentry;
     private JTextField txtFld_washvacant;
     private JLabel lbl_carwashindicators;
+    private JRadioButton rbtn1;
+    private JRadioButton rbtn2;
+    private JRadioButton rbtn3;
+    private JRadioButton rbtn4;
+    private JRadioButton rbtn5;
+    private JRadioButton rbtn6;
+    private JRadioButton rbtn7;
+    private JRadioButton rbtn8;
+    private JRadioButton rbtn9;
+    private JTextField txtFld_time;
+    private JLabel lbl_time;
+    private JLabel lbl_slider;
+    private JSlider sld;
+    private JButton btn_stop;
 
     JCheckBox[] chbxArr = {chbx1, chbx2, chbx3, chbx4, chbx5, chbx6, chbx7, chbx8};
 
@@ -37,6 +53,13 @@ public class Controller extends JFrame {
                 start();
             }
         });
+
+        Dictionary labelDict = new Hashtable();
+        for (int i = 0; i < 5; i++)
+        {
+
+        }
+
     }
 
     public static void main(String[] args) {
@@ -56,19 +79,28 @@ public class Controller extends JFrame {
         frame.setLocation(x, y);
     }
 
+    public void setUp() {
+
+    }
+
     public void start() {
+        /*
+        Start button is pressed which turns the Wash Entry LED into red and disables
+        the top left part of the panel for the time being
+        */
         txtFld_washvacant.setBackground(Color.RED);
+        txtFld_washvacant.setText("Wash in Progress");
         btn_start.setEnabled(false);
-        boolean emptySelect = true;
+        boolean emptySelection = true;
 
         //Option checks
         for (JCheckBox j : chbxArr) {
             if (j.isSelected()) {
-                emptySelect = false;
+                emptySelection = false;
                 break;
             }
         }
-        if (emptySelect) {
+        if (emptySelection) {
             chbx1.setSelected(true);
         }
 
