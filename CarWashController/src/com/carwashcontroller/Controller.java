@@ -51,9 +51,8 @@ public class Controller extends JFrame {
     private JLabel lbl_exit;
     private JCheckBox[] chbxArr = {chbx1, chbx2, chbx3, chbx4, chbx5, chbx6, chbx7, chbx8};
     private JRadioButton[] rbtnArr = {rbtn1, rbtn2, rbtn3, rbtn4, rbtn5, rbtn6, rbtn7, rbtn8, rbtn9};
-
-
     private ButtonGroup bg = new ButtonGroup();
+
 
     public Controller() {
 
@@ -69,6 +68,12 @@ public class Controller extends JFrame {
             }
         });
 
+        btn_stop.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
     }
 
     public static void main(String[] args) {
@@ -150,15 +155,6 @@ public class Controller extends JFrame {
         sld.setEnabled(true);
         btn_stop.setEnabled(true);
 
-        //Console test
-        /*
-        for (Operation o : opArr)
-        {
-            System.out.println(o.getName());
-            System.out.println(o.getStation());
-            System.out.println(o.isActive());
-            System.out.println(o.getRbtn().getText());
-        }*/
 
         Timer timer = new Timer();
         TimerTask taskDelay = new TimerTask() {
@@ -168,7 +164,7 @@ public class Controller extends JFrame {
             }
         };
 
-        timer.schedule(taskDelay, 5000);
+        timer.schedule(taskDelay, 2000);
 
     }
 
@@ -233,14 +229,38 @@ public class Controller extends JFrame {
                     activeOp.getRbtn().setEnabled(false);
                     activeOp.setDone(true);
                 }
-
-
-
-                //activeOp.setDone(true);
-
-
             }
         }
+
+        while (sld.getValue() != 4)
+        {
+            rbtn9.setEnabled(true);
+            rbtn9.setSelected(true);
+        }
+
+        txtFld_time.setText("0.00");
+        rbtn9.setEnabled(false);
+        bg.clearSelection();
+        stop();
+    }
+
+    public void stop() {
+
+        //Wash Vacant indicator
+        txtFld_washvacant.setBackground(Color.GREEN);
+        txtFld_washvacant.setText("Wash Vacant");
+        btn_start.setEnabled(true);
+
+        //Enabling checkboxes
+        for (JCheckBox j : chbxArr) {
+            j.setEnabled(true);
+        }
+
+        //To enable the checkboxes and to disable slider and stop button
+        sld.setEnabled(false);
+        sld.setValue(0);
+        btn_stop.setEnabled(false);
+
     }
 
     public boolean ledChecker(Operation operation) {
