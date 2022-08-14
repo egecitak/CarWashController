@@ -195,13 +195,8 @@ public class Controller extends JFrame {
                 {
                     checkTimer.cancel();
                     washTimer.cancel();
-                    activeOp.getRbtn().setSelected(false);
-                    activeOp.getRbtn().setEnabled(false);
-                    txtFld_time.setText("0.00");
-                    rbtn9.setEnabled(false);
-                    bg.clearSelection();
                     stop();
-                    break;
+                    return;
                 }
 
                 Operation finalActiveOp = activeOp;
@@ -252,13 +247,14 @@ public class Controller extends JFrame {
             rbtn9.setSelected(true);
         }
 
-        txtFld_time.setText("0.00");
-        rbtn9.setEnabled(false);
-        bg.clearSelection();
         stop();
     }
 
     public void stop() {
+
+        txtFld_time.setText("0.00");
+        rbtn9.setEnabled(false);
+        bg.clearSelection();
 
         //Wash Vacant indicator
         txtFld_washvacant.setBackground(Color.GREEN);
