@@ -4,8 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Dictionary;
-import java.util.Hashtable;
+import java.util.Enumeration;
 
 public class Controller extends JFrame {
     private JPanel wrapper;
@@ -43,22 +42,22 @@ public class Controller extends JFrame {
     private JLabel lbl_slider;
     private JSlider sld;
     private JButton btn_stop;
+    private JLabel lbl_entry;
+    private JLabel lbl_stn1;
+    private JLabel lbl_stn2;
+    private JLabel lbl_stn3;
+    private JLabel lbl_exit;
 
     JCheckBox[] chbxArr = {chbx1, chbx2, chbx3, chbx4, chbx5, chbx6, chbx7, chbx8};
 
     public Controller() {
+
         btn_start.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 start();
             }
         });
-
-        Dictionary labelDict = new Hashtable();
-        for (int i = 0; i < 5; i++)
-        {
-
-        }
 
     }
 
