@@ -47,10 +47,11 @@ public class Controller extends JFrame {
     private JLabel lbl_stn2;
     private JLabel lbl_stn3;
     private JLabel lbl_exit;
-
-    JCheckBox[] chbxArr = {chbx1, chbx2, chbx3, chbx4, chbx5, chbx6, chbx7, chbx8};
+    private JCheckBox[] chbxArr;
 
     public Controller() {
+
+        JCheckBox[] chbxArr = {chbx1, chbx2, chbx3, chbx4, chbx5, chbx6, chbx7, chbx8};
 
         btn_start.addActionListener(new ActionListener() {
             @Override
@@ -76,10 +77,6 @@ public class Controller extends JFrame {
         int x = (Toolkit.getDefaultToolkit().getScreenSize().width - frame.getSize().width) / 2;
         int y = (Toolkit.getDefaultToolkit().getScreenSize().height - frame.getSize().height) / 2;
         frame.setLocation(x, y);
-    }
-
-    public void setUp() {
-
     }
 
     public void start() {
