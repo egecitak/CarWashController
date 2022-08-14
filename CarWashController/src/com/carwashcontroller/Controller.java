@@ -52,7 +52,7 @@ public class Controller extends JFrame {
     private JCheckBox[] chbxArr = {chbx1, chbx2, chbx3, chbx4, chbx5, chbx6, chbx7, chbx8};
     private JRadioButton[] rbtnArr = {rbtn1, rbtn2, rbtn3, rbtn4, rbtn5, rbtn6, rbtn7, rbtn8, rbtn9};
     private ButtonGroup bg = new ButtonGroup();
-
+    private boolean stopFlag = false;
 
     public Controller() {
 
@@ -64,6 +64,7 @@ public class Controller extends JFrame {
         btn_start.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                stopFlag = false;
                 start();
             }
         });
@@ -71,7 +72,7 @@ public class Controller extends JFrame {
         btn_stop.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                stopFlag = true;
             }
         });
     }
@@ -164,7 +165,7 @@ public class Controller extends JFrame {
             }
         };
 
-        timer.schedule(taskDelay, 2000);
+        timer.schedule(taskDelay, 500);
 
     }
 
@@ -189,6 +190,19 @@ public class Controller extends JFrame {
             int startCount = 0;
 
             while (activeOp.isDone() == false) {
+
+                if (stopFlag)
+                {
+                    checkTimer.cancel();
+                    washTimer.cancel();
+                    activeOp.getRbtn().setSelected(false);
+                    activeOp.getRbtn().setEnabled(false);
+                    txtFld_time.setText("0.00");
+                    rbtn9.setEnabled(false);
+                    bg.clearSelection();
+                    stop();
+                    break;
+                }
 
                 Operation finalActiveOp = activeOp;
 
