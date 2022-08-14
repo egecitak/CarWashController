@@ -4,7 +4,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Enumeration;
+import java.sql.Time;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class Controller extends JFrame {
     private JPanel wrapper;
@@ -47,11 +49,18 @@ public class Controller extends JFrame {
     private JLabel lbl_stn2;
     private JLabel lbl_stn3;
     private JLabel lbl_exit;
-    private JCheckBox[] chbxArr;
+    private JCheckBox[] chbxArr = {chbx1, chbx2, chbx3, chbx4, chbx5, chbx6, chbx7, chbx8};
+    private JRadioButton[] rbtnArr = {rbtn1, rbtn2, rbtn3, rbtn4, rbtn5, rbtn6, rbtn7, rbtn8, rbtn9};
+
+
+    private ButtonGroup bg = new ButtonGroup();
 
     public Controller() {
 
-        JCheckBox[] chbxArr = {chbx1, chbx2, chbx3, chbx4, chbx5, chbx6, chbx7, chbx8};
+        for (int i = 0; i < 9; i++)
+        {
+            bg.add(rbtnArr[i]);
+        }
 
         btn_start.addActionListener(new ActionListener() {
             @Override
@@ -87,23 +96,172 @@ public class Controller extends JFrame {
         txtFld_washvacant.setBackground(Color.RED);
         txtFld_washvacant.setText("Wash in Progress");
         btn_start.setEnabled(false);
-        boolean emptySelection = true;
 
-        //Option checks
+        boolean emptySelection = true;
+        int actOps = 0;
+
+        //Option checks and count how many active operations
         for (JCheckBox j : chbxArr) {
             if (j.isSelected()) {
                 emptySelection = false;
-                break;
+                actOps++;
             }
         }
         if (emptySelection) {
             chbx1.setSelected(true);
+            actOps++;
         }
 
+        //Create an array of active operations
+        Operation[] opArr = new Operation[actOps];
+        int index = 0;
+        for (int i = 0; i < chbxArr.length; i++)
+        {
+            JCheckBox tmpChbx = new JCheckBox();
+            JRadioButton tmpRbtn = new JRadioButton();
+            tmpChbx = chbxArr[i];
+            tmpRbtn = rbtnArr[i];
 
-        //To disable the checkboxes when washing starts
+            int station = 0;
+            switch (i) {
+                case 0, 1:
+                    station = 1;
+                    break;
+                case 2, 3, 4, 5:
+                    station = 2;
+                    break;
+                case 6, 7:
+                    station = 3;
+            }
+
+            if (tmpChbx.isSelected())
+            {
+                Operation operation = new Operation(tmpChbx.getText(), true, station, 5, tmpRbtn);
+                opArr[index] = operation;
+                index++;
+            }
+        }
+
         for (JCheckBox j : chbxArr) {
             j.setEnabled(false);
         }
+
+        //To disable the checkboxes, enable slider and stop button
+        sld.setEnabled(true);
+        btn_stop.setEnabled(true);
+
+        //Console test
+        /*
+        for (Operation o : opArr)
+        {
+            System.out.println(o.getName());
+            System.out.println(o.getStation());
+            System.out.println(o.isActive());
+            System.out.println(o.getRbtn().getText());
+        }*/
+
+        Timer timer = new Timer();
+        TimerTask taskDelay = new TimerTask() {
+            @Override
+            public void run() {
+                washing(opArr);
+            }
+        };
+
+        timer.schedule(taskDelay, 5000);
+
+    }
+
+    public void washing (Operation[] opArr) {
+
+        for (int i = 0; i < opArr.length; i++)
+        {
+            Timer checkTimer = new Timer();
+            Timer washTimer = new Timer();
+
+            Operation activeOp = new Operation();
+            activeOp = opArr[i];
+
+            int[] count = {-1};
+            int[] counterLimit = {activeOp.getTime()};
+
+            boolean firstRun = true;
+            boolean[] washOK = new boolean[1];
+            washOK[0] = ledChecker(activeOp);
+            boolean started = false;
+
+            int startCount = 0;
+
+            while (activeOp.isDone() == false) {
+
+                Operation finalActiveOp = activeOp;
+
+                //Checking if the slider is at the right location in small intervals
+                TimerTask checkTask = new TimerTask() {
+                    @Override
+                    public void run() {
+                        washOK[0] = ledChecker(finalActiveOp);
+                    }
+                };
+
+                if (firstRun) {
+                    checkTimer.schedule(checkTask, 0, 100);
+                    firstRun = false;
+                }
+
+                TimerTask washTask = new TimerTask() {
+                    @Override
+                    public void run() {
+                        if (washOK[0] && count[0] < counterLimit[0]) {
+                            count[0]++;
+                            txtFld_time.setText("0.0" + count[0]);
+                        }
+                    }
+                };
+
+                //Washing start condition
+                if (washOK[0] && !started) {
+                    washTimer.schedule(washTask, startCount, 1000);
+                    started = true;
+                }
+
+                //Washing done
+                if (count[0] == counterLimit[0]) {
+                    checkTimer.cancel();
+                    washTimer.cancel();
+                    activeOp.getRbtn().setSelected(false);
+                    activeOp.getRbtn().setEnabled(false);
+                    activeOp.setDone(true);
+                }
+
+
+
+                //activeOp.setDone(true);
+
+
+            }
+        }
+    }
+
+    public boolean ledChecker(Operation operation) {
+
+        if (operation.getStation() != sld.getValue()) {
+            operation.getRbtn().setSelected(false);
+            operation.getRbtn().setEnabled(false);
+            rbtn9.setEnabled(true);
+            rbtn9.setSelected(true);
+            return false;
+        }
+        else
+        {
+            rbtn9.setEnabled(false);
+            rbtn9.setSelected(false);
+            operation.getRbtn().setSelected(true);
+            operation.getRbtn().setEnabled(true);
+            return true;
+        }
     }
 }
+
+
+
